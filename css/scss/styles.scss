@@ -1,0 +1,308 @@
+//js notebook styles
+
+$BAD: #f0f; //should never be visible; used for layout debug
+//$VFILL: 100%; //fill entire window height
+
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// high-level, generic:
+//
+
+html
+{
+//no; decide later:    background-color: $BAD; //for debug; should not show if window is filled
+    height: 100%; //kludge: fill entire window; body needs to know parent's height
+}
+
+//make it look like tty console unless overridden:
+body //, html
+{
+//    x-font-family: Arial, Helvetica, sans-serif;
+//    x-font-family: "Times New Roman", Times, serif;
+    font-family: "Courier New", Courier, monospace;
+    font-size: 10px;
+    background-color: #333;
+    color: #0c0;
+//    x-white-space: pre-wrap;
+//    x-position: absolute;
+//    x-left: 0; x-top: 0;
+//    x-margin: 2px 4px;
+//    x-padding: -25px;
+    height: 100%; //fill entire window; CAUTION: parent size should not be "auto"
+    margin: 0;
+//    x-padding: 20px 40px;
+}
+
+//make it look like error message:
+noscript
+{
+    $COLOR: #f00;
+    background-color: #300;
+    border: 2px solid $COLOR;
+    border-radius: 8px;
+    color: $COLOR;
+    font-weight: bold;
+    font-size: 18px;
+    padding: 6px 12px;
+    margin: 6px 12px;
+    margin-top: 40px; //kludge: this one needs to be separate so parent will honor it?
+//    x-white-space: normal;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// notebook page:
+//
+
+$RINGW: 52px; //ring image width
+
+body
+{
+    $BORDER: 2px;
+    $FUD: 6px; //nudge edge of paper
+    $PAPER: #ff8; //give it a slight yellow tint
+    $EDGE: #660; //darker edge
+//make body contents scrollable:
+//    display: flex;
+//    flex-direction: column;
+//    overflow-x: hidden;
+//    overflow-y: auto; //hidden; //prevent scrollbars
+//    overflow: hidden; //prevent notebook graphics from scrolling
+//    overflow-x: hidden;
+//    overflow-y: auto; //auto; //scroll if notes are too big
+    overflow: hidden auto; //vertical scroll if notes are too big
+//    scrollbar-width: thin;
+//no worky:    scrollbar-color: $EDGE $PAPER; //thumb + track color
+//share position with scroller; needs explicit copy (JavaScript can't access ::before)
+    #nb-scroller, &::before
+    {
+//    float: left; //flow later elements to right
+//        border: 1px solid #0ff;
+//    margin-left: $RINGW / 2;
+        width: calc(100% - #{$RINGW - $FUD} / 2 - 2 * #{$BORDER} - 0px); //leave room for rings + border
+        position: fixed; //absolute; //overlay previous content
+        left: ($RINGW - $FUD) / 2;
+        top: 0; 
+    }
+//notebook paper background:
+    &::before
+    {
+        content: ""; //kludge: ::before/after need content
+        height: calc(100% - 2 * #{$BORDER}); //99% //leave room for border; CAUTION: parent height must be set
+//        width: calc(100% - #{$RINGW - $FUD} / 2 - 2 * #{$BORDER} - 0px); //leave room for rings + border
+        display: block; //enforce width + height
+//        font-size: 80px;
+        background-color: $PAPER;
+        color: $BAD; //#f00; //for debug; should not show if body is filled
+        border: $BORDER solid $EDGE;
+        border-radius: 12px;
+//        overflow: auto;
+    }
+//overlay notebook rings above/after notes for correct visual effect
+//needs to be separate content so note padding/margin won't affect it:
+    &::after
+    {
+        background-image: url("../graphics/rings.png");
+        background-repeat: no-repeat space; //horiz, vert
+        content: ""; //kludge: ::before/after need content
+        height: 100%; //40px; //CAUTION: parent height must be set
+        width: $RINGW; //need to set a width in order to display
+        display: block; //enforce width/height
+//        position: absolute;
+//float: left; //flow later elements to right
+        position: fixed; //absolute; //overlay previous content
+        top: 0; 
+        left: 0;
+//    z-index: 99;
+    }
+}
+
+//body #nb-scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override
+//{
+//    height: auto; //use content from child notes
+//    overflow-y: auto; //scroll if notes are too big
+//    position: absolute; //CAUTION: need this in order to display above body bkgnd; "relative" allows multiple blocks to flow
+//    padding-right: 20px;
+//}
+
+pre,
+notes,
+.notes,
+#notes,
+textarea,
+body #nb-scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override left
+{
+    $INK: #00c;
+    $SCROLLW: 10px; //allow space at right edge for conditional scrollbar
+    $PAD: 8px; //pad left edge of paper
+//    @include nb-misc;
+//    x-font-family: "Courier New", Courier, monospace;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+//    x-color: black;
+//    x-background-color: 0;
+//    color: #0f0;
+    position: relative; //CAUTION: need this in order to display above body bkgnd; "relative" allows multiple blocks to flow
+//    overflow: scroll; //prevents scrollbars
+//  top: 0;
+//    z-index: 99;
+//    x-resize: none;
+//    x-border: 2px dashed #f00;
+//no worky:    margin-top: 0;
+//no worky:    margin-left: 44px;
+//    display: none; //block; //enforce left margin
+//    :first-of-type
+//insert wrapper for scrolling:
+//    &:first-of-type::before
+//    &:first-child::before
+    white-space: pre-wrap; //white space is significant in markdown text; preserve it
+//    left: $RINGW;
+//    width: calc(100% - #{$RINGW});
+//    display: block; //enforce width/height
+//  display: inline;
+//    background-color: #f00;
+//background: inherit;
+    color: $INK;
+//    margin-left: $RINGW;
+//    margin-top: 0;
+    left: $RINGW + $PAD; //leave space for notebook rings + a little padding
+    width: calc(100% - #{$RINGW} - #{$PAD} - #{$SCROLLW});
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// notes styling:
+//
+
+h1
+{
+//    font-size: 25em;
+    line-height: 0.1em;
+//    padding-bottom: 0;
+//    margin-bottom: 0;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// editor:
+//
+
+.tabs
+{
+    overflow: hidden;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+}
+
+.tabs button
+{
+    background-color: inherit;
+    float: left;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+.tabs button:hover
+{
+    background-color: #ddd;
+}
+
+.tabs button.active
+{
+    background-color: #ccc;
+}
+
+.tab-content
+{
+    display: none;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// JUNK:
+//
+
+/*
+body
+{
+    background: royalblue;
+}
+.splitpanes__pane
+{
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2) inset;
+}
+.splitpanes__pane > span,
+.splitpanes__pane > div,
+.splitpanes__pane > p
+{
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 48pt;
+  color: royalblue;
+  opacity: 0.6;
+}
+body, html, #editor
+{
+  margin: 0;
+  height: 100%;
+  font-family: "Helvetic Neue", Arial, sans-serif;
+  x-padding: 0;
+  background-color: #333;
+}
+textarea, #editor div
+{
+  display: inline-block;
+  width: 49%; height: 100%;
+  vertical-align: top;
+  box-sizing: border-box;
+  padding: 0 2px;
+}
+textarea
+{
+  border: none;
+  border-right: 1px solid #ccc;
+  resize: none;
+  outline: none;
+  background-color: #f6f6f6;
+  font-size: 14px;
+  font-family: "Monaco", courier, monospace;
+  padding: 20px;
+}
+code
+{
+  color: #f66;
+}
+html, body, #app
+{
+  height: 100%;
+  margin: 0;
+}
+body
+{
+  font-family: Helvetica, Arial, sans-serif;
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 5em;
+}
+.multipane.layout-v, .multipane-resizer
+{
+  margin: 0;
+  left: 0;
+  width: 15px;
+  background-color: #08f;
+}
+*/
+
+//eof
