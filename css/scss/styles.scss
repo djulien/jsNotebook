@@ -76,7 +76,7 @@ body
 //    scrollbar-width: thin;
 //no worky:    scrollbar-color: $EDGE $PAPER; //thumb + track color
 //share position with scroller; needs explicit copy (JavaScript can't access ::before)
-    #nb-scroller, &::before
+    #scroller, &::before
     {
 //    float: left; //flow later elements to right
 //        border: 1px solid #0ff;
@@ -119,7 +119,7 @@ body
     }
 }
 
-//body #nb-scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override
+//body #scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override
 //{
 //    height: auto; //use content from child notes
 //    overflow-y: auto; //scroll if notes are too big
@@ -132,12 +132,13 @@ notes,
 .notes,
 #notes,
 textarea,
-body #nb-scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override left
+body #scroller //CAUTION: sass includes "body" prefix above; need to repeat it here to override left
 {
-    $INK: #00c;
     $SCROLLW: 10px; //allow space at right edge for conditional scrollbar
-    $PAD: 8px; //pad left edge of paper
-//    @include nb-misc;
+    $PAD: 8px + 4px; //pad left edge of paper; allow extra for Editor.js tool button
+    $EDIT_TOOL: 20px;
+    $INK: #00c;
+    //    @include nb-misc;
 //    x-font-family: "Courier New", Courier, monospace;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
@@ -167,8 +168,49 @@ body #nb-scroller //CAUTION: sass includes "body" prefix above; need to repeat i
     color: $INK;
 //    margin-left: $RINGW;
 //    margin-top: 0;
-    left: $RINGW + $PAD; //leave space for notebook rings + a little padding
-    width: calc(100% - #{$RINGW} - #{$PAD} - #{$SCROLLW});
+    left: calc(#{$RINGW} + #{$PAD}); //leave space for notebook rings + a little padding
+    width: calc(100% - #{$RINGW} - #{$PAD} - #{$EDIT_TOOL} - #{$SCROLLW});
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+////
+/// editor styling:
+//
+
+/*
+.ce-block
+{
+    border: 1px solid $INK;
+}
+*/
+
+//use descendants to limit boxed area:
+//.ce-block--focused .ce-header,
+//.ce-block--focused .ce-paragraph
+.ce-block--focused > .ce-block__content
+{
+//    border: 1px solid $INK; //#08f;
+//    max-width: 100%;
+    border-width: 1px;
+    border-style: solid;
+}
+
+.ce-block__content,
+.ce-toolbar__content
+{
+//    max-width: calc(100% - 30px); //editor.js uses 650px; allow full width of parent, but leave room for tool button
+    max-width: 100%; //editor.js uses 650px; allow full width of parent
+}
+
+.ce-toolbar__actions
+{
+//    position: absolute;
+//    right: -30px;
+//    top: 5px;
+//    left: 0;
+//    top: -20px; //put above on left side
+    right: -24px; //nudge closer to text block
 }
 
 
@@ -185,9 +227,10 @@ h1
 //    margin-bottom: 0;
 }
 
+
 ///////////////////////////////////////////////////////////////////////////////
 ////
-/// editor:
+/// TBD editing:
 //
 
 .tabs

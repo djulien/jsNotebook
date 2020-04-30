@@ -1,10 +1,21 @@
 # notebook
 My (JavaScript) notebook, SPA, self-contained (except for CDNs)
 
-# status
+## usage
+install deps:
+npm install
+run:
+npm start
+
+## status
+** under construction
+
 [x] basic visual notebook page
-[ ] markdown render
+[x] scss -> css (sass)
+[x] live reload (for dev)
+[x] headings, text, code blocks
+[ ] markdown render (codemirror?)
 [ ] editor (notes, js, css, html)
-[ ] file manager
+[ ] file manager, page turn
 [ ] 3D graphics
 [ ] examples, docs
