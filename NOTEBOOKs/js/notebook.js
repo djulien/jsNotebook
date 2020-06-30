@@ -2,6 +2,8 @@
 "use strict";
 "TODO: magic-globals";
 
+//extensions();
+
 //don't start until deferred scripts load:
 debug(document.readyState);
 //if (true); else
@@ -13,7 +15,10 @@ function main()
 {
 //    throw "parent should override main()";
     debug(document.readyState);
+//    tabstrip();
     get_title();
+    gotab();
+return;
     get_notes();
 //    Array.from(document.getElementsByClassName("tab-link")).forEach((tab) => tab.className = tab.className.replace(" active", ""));
 //    tab.click();
@@ -21,12 +26,20 @@ wrap();
 return;
     make_tabs();
     fill_tabs();
-    gotab();
 }
+
+/*
+function tabstrip()
+{
+    document.getElementById("tabstrip")
+        .getElementsByTagName("button") //querySelectorAll(".tabstrip button"));
+	.forEach((button) => button.onclick = gotab); //.addEventListener("click", gotab)); //function(evt)
+}
+*/
 
 function get_title()
 {
-    document.title = "** " + document.baseURI; //TODO: get correct name
+    document.title = "** " + document.baseURI;
 }
 
 function get_notes()
@@ -41,9 +54,9 @@ function get_notes()
     notes.push(...Array.from(document.getElementsByTagName("pre"))); //allows text to display if Javascript disabled
     notes.forEach((note) => note.style.display = "none"); //hide HTML markup; styled markup will be displayed later
 //    get_notes.indented = notes.reduce((note) => note.innerText.split(/\r?\n))
-//debug("raw text", escnp(notes.map((note) => note.innerText.replace(/ +$/, "")).join("<hr/>")));
-    get_notes.text = notes.map((note) => unindent(note.innerText.replace(/ +$/, ""))); //.join("<hr/>");
-    debug(`found ${plural(notes.length)} notes section${plural.suffix}, textlen ${notes.join("<hr/>").length}:'${escnp(notes.join("<hr/>"))}'`);
+debug("raw text", escnp(notes.map((note) => note.innerText.replace(/ +$/, "")).join("<hr/>")));
+    get_notes.text = notes.map((note) => unindent(note.innerText.replace(/ +$/, ""))).join("<hr/>");
+    debug(`found ${plural(notes.length)} notes section${plural.suffix}, textlen ${get_notes.text.length}:'${escnp(get_notes.text)}'`);
 //    return get_notes.cached = notes; //.forEach()
 }
 
@@ -56,194 +69,11 @@ function wrap()
 //    const wrapper = document.getElementsByTagName("::before") || [];
 //debug(wrapper.length);
 //debug((document.getElementById("::before") || {}).id);
+    document.body.insertAdjacentHTML("beforeend", `<div id="nb-scroller"><h1>title</h1>${get_notes.text}</div>`);
 //    const wrapper = document.getElementById("nb-wrapper");
 //    wrapper.style = window.getComputedStyle(document.querySelector("body"), ":before");
 //debug(JSON.stringify(wrapper.style));
-
-//    document.body.insertAdjacentHTML("beforeend", `<div id="scroller"><h1>title</h1>${get_notes.text}</div>`);
-//debug(JSON.stringify(document.currentScript));
-//debug(JSON.stringify(document.location));
-    document.body.insertAdjacentHTML("beforeend", `<div id="scroller"></div>`);
-//return;
-//github.com/editorjs/@editorjs
-//github.com/codex-team/editor.js/blob/release/2.18/example/example.html
-//editorjs.io/the-first-plugin
-//editorjs.io/saving-data
-//debug(endpt("test"));
-    const ed = new EditorJS(
-    {
-        holder: "scroller",
-        onReady: () =>
-        {
-//kludge: simulate mouse event to set focused style:
-//https://stackoverflow.com/questions/6157929/how-to-simulate-a-mouse-click-using-javascript
-//            document.getElementsByClassName("ce-block")[0].dispatchEvent(new MouseEvent("click",
-//            {
-//                view: window,
-//                bubbles: true,
-//                cancelable: true,
-//                clientX: 20,
-//            }));
-            debug("editorJS: ready");
-        },
-        onChange: () => debug("editorJS: content changed"),
-        autofocus: true, //CAUTION: prevents placeholder from showing
-//        placeholder: "Enter text here",
-        logLevel: "VERBOSE", //"ERROR",
-        initialBlock: "paragraph", //default tool
-        data: //initial contents
-        {
-            blocks:
-            [
-                {type: "header", data: {text: "Title ...", level: 1, }, },
-//                {type: "paragraph", data: {text: "Enter more text here ...", }, },
-            ]
-//                get_notes.text
-//                    .map((note) => )
-        },
-        tools: //CAUTION: key names are written to output file
-        {
-/*
-            embed: //github.com/editor-js/embed
-            {
-                class: Embed,
-//                config: //CAUTION: passing services here will not enable others
-//                {
-//                    services: {youtube: true},
-//                },
-                inlineToolbar: true,
-                shortcut: "CTRL+E", //"CMD+SHIFT+E",
-            },
-            list: //github.com/editor-js/list
-            {
-                class: List,
-                inlineToolbar: true,
-                shortcut: "CTRL+L", //"CMD+SHIFT+L",
-            },
-*/
-            header: //github.com/editor-js/header
-            {
-                class: Header,
-                config:
-                {
-                    placeholder: "Enter new header",
-                    levels: [2, 3, 4, 5, 6], //put level 1 at start, doesn't repeat
-                    defaultLevel: 3,
-                },
-                inlineToolbar: true,
-                shortcut: "CTRL+H", //"CMD+SHIFT+H",
-            },
-            paragraph: //github.com/editor-js/paragraph; built-in?
-            {
-                class: Paragraph,
-                inlineToolbar: true,
-                shortcut: "CTRL+P", //"CMD+SHIFT+P",
-            },
-/*
-            image: //github.com/editor-js/image; NOTE: needs server-side logic
-            {
-                class: ImageTool,
-                config:
-                {
-                    endpoints: { byFile: endpt("uploader"), byUrl: endpt("fetcher"), },
-                    additionalRequestData: {more: "tbd"},
-                },
-            },
-            link: //github.com/editor-js/link; NOTE: needs server-side logic
-            {
-                class: LinkTool,
-                config: {endpoint: endpt("fetcher"), },
-                inlineToolbar: true,
-            },
-*/
-            code: //github.com/editor-js/code
-            {
-                class: CodeTool,
-                placeholder: "insert code here",
-                shortcut: "CTRL+C", //"CMD+SHIFT+C",
-            },
-/*
-            table: //github.com/editor-js/table
-            {
-                class: Table,
-                placeholder: "insert code here",
-                config: {rows: 2, cols: 2, },
-                inlineToolbar: true,
-                shortcut: "CTRL+T", //"CMD+SHIFT+T",
-            },
-*/
-            checklist: //github.com/editor-js/checklist
-            {
-                class: Checklist,
-                inlineToolbar: true,
-                shortcut: "CTRL+K", //"CMD+SHIFT+K",
-            },
-            marker: //github.com/editor-js/marker
-            {
-                class: Marker,
-                inlineToolbar: true,
-                shortcut: "CTRL+M", //"CMD+SHIFT+M",
-            },
-//warning
-//attaches
-//personality
-//simple-image
-            raw: //github.com/editor-js/raw
-            {
-                class: RawTool,
-                placeholder: "<tag></tag>",
-                inlineToolbar: true,
-                shortcut: "CTRL+M", //"CMD+SHIFT+M",
-            },
-            quote: //github.com/editor-js/quote
-            {
-                class: Quote,
-                quotePlaceholder: "quote ...",
-                captionPlaceholder: "caption ...",
-                inlineToolbar: true,
-                shortcut: "CTRL+Q", //"CMD+SHIFT+Q",
-            },
-            inlineCode: //github.com/editor-js/inline
-            {
-                class: InlineCode,
-                placeholder: "<tag></tag>",
-                inlineToolbar: true,
-                shortcut: "CTRL+I", //"CMD+SHIFT+I",
-            },
-//<!-- TODO
-//underline
-//editorjs-php
-//audio
-//            my: My,
-        },
-    });
-//    debug(`editorJS is ${ed.isReady || "NOT "}ready`);
-return;
-    ed.save()
-        .then((data) => debug("out:", data))
-        .catch((exc) => debug("EXC:", exc));
-//return;
-//    document.body.insertAdjacentHTML("beforeend", `<textarea id="scroller"></textarea>`);
-//    CodeMirror.fromTextArea(document.getElementById("scroller"))
-//debug(JSON.stringify(CodeMirror.modes), JSON.stringify(CodeMirror.mimeModes));
-//    const cm = CodeMirror(document.getElementById("scroller"),
-//    {
-//        value: get_notes.text,
-//        lineNumbers: true,
-//        mode: "htmlmixed",
-////        theme: .cm-s-[name],
-//        autoFocus: true,
-//    })
-//https://codemirror.net/doc/manual.html
-//        .on("change", (inst, {from, to, text, removed, origin}) => debug("EVT: changed")) //(instance: CodeMirror, changeObj: object)type: string, func: (...args))
-//        .on("viewportChange", (inst, from, to) => debug("EVT: scrolled"))
-//        .on("gutterContextMenu", (inst, line, gutter_string, {Event}) => debug("EVT: ctx menu"))
-////        "focus", "blur", "scroll", "optionChange"
-//        .Doc.on("change", (doc, changes) => debug("doc EVT: change"));
-//+AddOns
 }
-
-function endpt(name) { return document.location.href.replace(/[^\/]+$/, "") + name; } //.href..baseURI + name; }
 
 function make_tabs()
 {
@@ -304,13 +134,37 @@ function fill_tabs()
     CodeMirror.fromTextArea(document.getElementById("Notes").getElementsByTagName("textarea")[0])
 }
 
-function gotab(evt, label)
+function gotab(evt, label) //= {target: document.getElementiById("tabstrip").getElementsByTagName("button")[0]}, label)
 {
-debug("go tab", label || "(first)");
+    if (!gotab.tabs) //first time: cache data
+//    {
+	gotab.tabs = Array.from(document.getElementsByClassName("tabstrip")) //[]; //in case more than 1 tabstrip (useless?)
+            .reduce((alltabs, tabstrip) =>
+		(alltabs.push(...Array.from(tabstrip.getElementsByTagName("button")).map((button) =>
+		    ({
+			button: (button.onclick = gotab, button),
+			contents: document.getElementById(button.innerText),
+		    }))),
+	         alltabs), []);
+//	        .map((tab) => alltabs.push(tab)));
+//debug("got", gotab.tabs.length, "tabs using selector");
+//        .getElementsByTagName("button") //querySelectorAll(".tabstrip button"));
+//	gotab.buttons.forEach((button) => button.onclick = gotab); //.addEventListener("click", gotab)); //function(evt)
+//        gotab.links = Array.from(document.getElementsByClassName("tab-link"));
+//        gotab.contents = Array.from(document.getElementsByClassName("tab-content"));
+//    }
+    const target = ((evt || {}).currentTarget || gotab.tabs[0].button); //default first tab
+//debug("caller evt.target", ((evt || {}).currentTarget || gotab.buttons[0]).tagName); //JSON.stringify(event.target));
+//debug("caller this", ((evt || {}).currentTarget || gotab.buttons[0]).innerText); //JSON.stringify(this));
+//    const links2 = Array.from(document.getElementById("tabstrip").getElementsByTagName("button")); //querySelector(".tabstrip button"));
+debug("go tab", label || target.innerText || "(first)", "of", gotab.tabs.length);
 //debug(typeof document.getElementsByClassName("tab-content"), JSON.stringify(document.getElementsByClassName("tab-content")));
-    make_tabs.links.forEach((tab) => tab.className = tab.className.replace(" active", ""));
-    ((evt || {}).currentTarget || make_tabs.links[0]).className += " active";
-    make_tabs.contents.forEach((tab, inx) => tab.style.display = ((tab.id == label) || (!inx && !label))? "block": "none");
+    gotab.tabs.forEach(({button, contents}) =>
+    {
+	const select = (button.innerText == target.innerText) && " active";
+	button.className = button.className.replace(" active", "") + (select || "");
+        contents.style.display = select? "block": "none";
+    });
 }
 
 //function tab(label, contents)
@@ -418,5 +272,10 @@ function debug(...args)
 //console.log(stkfr);
     console.log("DEBUG:", ...args, srcline);
 }
+
+//function extensions()
+//{
+//    Object.defineProperty(Array.prototype, "push_fluent", {value: function(...args) { this.push(...args); return this; }});
+//}
 
 //eof
