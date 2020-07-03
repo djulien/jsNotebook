@@ -18,7 +18,10 @@ const express = require('express');
 //for express middleware, see https:github.com/senchalabs/connect#middleware
 const serve_index = require("serve-index");
 const serve_error = require("errorhandler");
-const showdown = require("showdown");
+const showdown = require("showdown"); //https://github.com/showdownjs/showdown/
+//import Showdown from 'showdown';
+const footnotes = require('showdown-ghost-footnotes'); //https://github.com/tivie/showdown-ghost-footnotes
+const showdownToc = require('showdown-toc'); //https://github.com/ahungrynoob/showdown-toc
 const exec = require('child_process').exec;
 const flatted /*{parse, stringify}*/ = require('flatted'); //allows circular refs
 
@@ -50,6 +53,7 @@ const opts =
     underline: true, //underline double/triple underscores; ex: __underlined word__.
 //    completeHTMLDocument: true, //output complete <html>, <head>, <body> tags
     metadata: true, //doc metadata at top of doc between ««« and »»» or --- and ---
+    extensions: [footnotes, showdownToc({ toc: [] })],
 };
 const converter = new showdown.Converter(opts);
 converter.setFlavor('github'); //strike-thru, checklist, etc
@@ -103,7 +107,7 @@ app.use((req, resp, next) =>
 //console.log(relpath(reqpath), safeStat(reqpath).isFile(), safeStat(reqpath).isDirectory(), safeStat(reqpath).isDirectory()? fs.readdirSync(reqpath).filter((file) => pathlib.basename(file, pathlib.extname(file)).toLowerCase() == "index").length: "!dir", safeStat(reqpath).isDirectory()? fs.readdirSync(reqpath).map((file) => pathlib.basename(file, pathlib.extname(file))).join(","): "!dir");
     const found_file =
         safeStat(reqpath).isFile()? reqpath:
-        safeStat(reqpath).isDirectory()? pathlib.join(reqpath, default_file(reqpath, req.url != "/") || "."): //root dir contains template; don't auto-expand
+        safeStat(reqpath).isDirectory()? pathlib.join(reqpath, default_file(reqpath, /*req.url != "/"*/ true) || "."): //root dir contains template; don't auto-expand
         !altpath? "":
         safeStat(altpath).isFile()? altpath:
         safeStat(altpath).isDirectory()? pathlib.join(altpath, default_file(altpath, true) || "."):
@@ -389,17 +393,20 @@ function srcline(depth, want_func)
 
 function default_file(path, any_name)
 {
-    return (fs.readdirSync(path)
+    const specials = {index: 1, 'no-index': -1};
+    const best = fs.readdirSync(path)
 //        .filter((file) => (pathlib.basename(file, pathlib.extname(file)).toLowerCase() == "index") || (pathlib.extname(file) == def_ext))
 //	.sort((lhs, rhs) => -exts.indexOf(lhs.toLowerCase()) - -exts.indexOf(rhs.toLowerCase()))[0];
 	.map((name) => ({name, ext: pathlib.extname(name), base: pathlib.basename(name, pathlib.extname(name))})) //CAUTION: need "()" around "{}" to disambiguate object literal from function body
 //	.filter(({base, ext_inx}) => !ext_inx || (base.toLowerCase() == "index")) //|| (ext == exts[0]))
-	.map((file) => Object.assign(file, {is_index: (file.base.toLowerCase() == "index"), ext_inx: exts.indexOf(file.ext.toLowerCase()) >>> 1})) //uint32; leave msb for index offset
+	.map((file) => Object.assign(file, {is_index: specials[file.base.toLowerCase()] || 0, ext_inx: exts.indexOf(file.ext.toLowerCase()) >>> 1})) //uint32; leave msb for index offset
 	.filter((file) => file.is_index || (any_name && (file.ext_inx != (-1 >>> 1))))
-	.map((file) => Object.assign(file, {order: file.ext_inx + 100 * !file.is_index}))
+	.map((file) => Object.assign(file, {order: file.ext_inx + 100 * (file.is_index || 2)}))
 	.sort((lhs, rhs) => (lhs.order - rhs.order) || lhs.base.localeCompare(rhs.base))
 //	.map((file, inx) => (console.log(`files[${inx}] ${JSON.stringify(file)}`), file))
-	[0] || {}).name;
+	[0] || {};
+console.log("best:".brightBlue, JSON.stringify(best), "retval".brightBlue, (best.is_index >= 0) && best.name);
+    return (best.is_index >= 0) && best.name;
 //    function order(file) { return file.ext_inx + 100 * !file.is_index; }
 }
 
