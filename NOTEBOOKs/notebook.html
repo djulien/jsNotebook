@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>YALP 0.20 jsNotebook Template</title>
+    <link href="./favicon.ico" rel="shortcut icon"/>
+    <meta name="keywords" content="Node.js,interactive,JavaScript,Notebook" />
+    <meta name="description" content="interactive Javascript notebook"/>
+<!-- Highlight -->
+<!--
+    <link type="text/css" rel="stylesheet" href="./css/github.css">
+    <script type="text/javascript" src="./lib/highlight.min.js"></script>
+-->
+<!-- Main style -->
+    <link type="text/css" rel="stylesheet" href="./css/nbstyles.css">
+    <script defer src="./js/notebook.js"></script>
+  </head>
+  <body class="notebook">
+    <div class="tabstrip">
+      <button default>Notes</button>
+      <button>Logic</button>
+      <button>Styles</button>
+      <button>Container</button>
+      <button>Files</button>
+    </div tabstrip>
+    <div class="header">FX Notebook: ${title}</div header>
+    <noscript>ERROR: Please enable JavaScript to continue.</noscript>
+      <div id="Notes" class="tab-content">
+        <div OBS-id="content">${contents}</div content>
+      </div Notes>
+      <div id="Logic" class="tab-content">
+        <h3>Logic</h3>
+        <textarea>
+          <p>TBD: parent js here</p>
+        </textarea>
+      </div Logic>
+      <div id="Styles" class="tab-content">
+        <h3>Styles</h3>
+        <textarea>
+          <p>TBD: parent css here</p>
+        </textarea>
+      </div Styles>
+      <div id="Container" class="tab-content">
+        <h3>Container</h3>
+        <textarea>
+          <p>TBD: parent html here</p>
+        </textarea>
+      </div Container>
+      <div id="Files" class="tab-content">
+        <h3>Files</h3>
+        <textarea>
+          <p>TBD: file mgr here</p>
+        </textarea>
+      </div Files>
+<!--
+	  <dialog open>
+    <form method="dialog" autocomplete="off" NOPE-novalidate>
+	    <label for="name">Name</label>
+      <input name="name" id="name" required>
+      <button>Submit</button>
+    </form>
+</dialog>
+-->
+    <div class="footer">
+      <a href="https://github.com/djulien/fxnotebook">
+        https://github.com/djulien/fxnotebook
+      </a>
+      &copy; 2020 <!--djulien-->
+    </div footer>
+  </body notebook>
+</html>
