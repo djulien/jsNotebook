@@ -16,9 +16,9 @@ To create a Notebook page from scratch, just create a Markdown text file and sto
 To set up the Javascript Notebook server, follow these steps:
 1. install [Node.js](https://nodejs.org)
 2. create a local folder for your Javascript Notebook pages; `cd` into the folder
-3. `npm init && npm install --save https://github.com/djulien/fxnotebook`
+3. `npm init && npm install --save https://github.com/djulien/jsNotebook`
 OR
-   `git clone https://github.com/djulien/fxnotebook`
+   `git clone https://github.com/djulien/jsNotebook`
 4. `npm test`
 
 When a Notebook page is opened in the browser, the server will render its contents as HTML so it can be displayed in the browser.

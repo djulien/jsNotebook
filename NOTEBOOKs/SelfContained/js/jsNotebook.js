@@ -2,6 +2,7 @@
 "use strict";
 "TODO: magic-globals";
 
+console.log("here");
 //extensions();
 
 //don't start until deferred scripts load:
