@@ -2,20 +2,51 @@
 "use strict";
 "TODO: magic-globals";
 
-console.log("here");
+debug("using ver " + VER);
+debug("start: doc state", document.readyState);
+//debug("body style", JSON.stringify(document.body.style));
+//debug("body comp style", JSON.stringify(window.getComputedStyle(document.body)));
+//debug("qry body comp style", JSON.stringify(window.getComputedStyle( document.querySelector("body"))));
 //extensions();
 
 //don't start until deferred scripts load:
-debug(document.readyState);
 //if (true); else
-if ((document.readyState == "complete") || ((document.readyState != "loading") && !document.documentElement.app)) main();
-else document.addEventListener("DOMContentLoaded", main);
+//if ((document.readyState == "complete") || ((document.readyState != "loading") && !document.documentElement.app)) main();
+//else document.addEventListener("DOMContentLoaded", main);
+isready.then(main); //wait for boot loader (stylesheets since this file is already loaded and executing)
 
 //create tabs, select default tab:
 function main()
 {
+debug("READY");
+//const props = {};
+//for (let name in document.body)
+//  if (document.body[name])
+//    if (typeof document.body[name] != "function") props[name] = true;
+//debug("body props:", Object.keys(props).sort((lhs, rhs) => lhs.localeCompare(rhs)).join(", "));
+//debug("body methods", getMethods(document.body).join(", "));
+    const notes = document.getElementById("notes") || document.body;
+debug(`old notes class '${notes.classList}', bgcolor: '${notes.style.backgroundColor}'`, "inner", notes.innerHTML.length + ":" + notes.innerHTML.slice(0, 30) + " ...");
+//document.body.style.background = "#808";
+//    applyStyle(document.body, "jsNotebook");
+//    dom_elt.classList += className;
+    notes.classList.add("jsNotebook");
+    notes.setAttribute("contentEditable", true); //mainly for debug
+//user_pref("capability.policy.policynames", "allowclipboard");
+//user_pref("capability.policy.allowclipboard.sites", "https://www.mozilla.org");
+//user_pref("capability.policy.allowclipboard.Clipboard.cutcopy", "allAccess");
+//user_pref("capability.policy.allowclipboard.Clipboard.paste", "allAccess");
+    notes.addEventListener('input', () =>
+    {
+        console.log('notes edited');
+    });
+//document.writeln('<div style="font-size: 30px;">hello</div>');
+//document.body.innerHTML += " ";
+//    notes.innerHTML = convert notes.innerText; //apply markdown formatting
+debug(`new notes class '${notes.classList}', bgcolor: '${notes.style.backgroundColor}'`, "inner", notes.innerHTML.length + ":" + notes.innerHTML.slice(0, 30) + " ...");
+return;
 //    throw "parent should override main()";
-    debug(document.readyState);
+    debug("main: doc state", document.readyState);
 //    tabstrip();
     get_title();
     gotab();
@@ -28,6 +59,85 @@ return;
     make_tabs();
     fill_tabs();
 }
+
+/*
+//adapted from https://flaviocopes.com/how-to-list-object-methods-javascript/
+function getMethods(obj)
+{
+  const svobj = obj;
+  const methods = {}; //new Set();
+  while (obj)
+  {
+    Object.getOwnPropertyNames(obj)
+//      .filter((name) => (typeof svobj[name]) == 'function')
+      .forEach((name) => methods[name] = true);
+    obj = Object.getPrototypeOf(obj);
+  }
+  return Object.keys(methods)
+    .filter((name) => (typeof svobj[name]) == "function")
+    .sort((lhs, rhs) => lhs.localeCompare(rhs));
+}
+
+function applyStyle(dom_elt, className)
+{
+    if (dom_elt.classList.contains(className)) return;
+debug("old body class list: ", dom_elt.classList);
+//    dom_elt.classList += className;
+    dom_elt.classList.add(className);
+debug("new body class list: ", dom_elt.classList);
+return;
+//  dom_elt.style.backgroundColor = "#808";
+//  dom_elt.className = "jsNotebook";
+//no worky for doc.body    dom_elt.className += style_name;
+//no worky for doc.body    dom_elt.addClass(className);
+//no worky:
+const props = Object.keys(dom_elt).filter((key) => dom_elt[key]);
+debug(`${props.length} props:`, props.join(","));
+return;
+    const old_style = getStyle();
+    const new_style = getStyle(className);
+    Object.entries(new_style).forEach(([name, value]) =>
+    {
+debug(`apply ${dom_elt.tagName} style.${name}? `, old_style[name] != value, ` old '${dom_elt.style[name]}' => new '${value}'`);
+        if (old_style[name] == value) return; //continue;
+        dom_elt.style[name] = value;
+    });
+}
+
+function getStyle(className)
+{
+    const id = "kludge";
+//kludge: create dummy dom element and read back style attrs
+    const tag = Object.assign(document.createElement("div"), {}); //{id, [className || "ignore"]: className});
+    if (className) tag.className = className; //document.getElementById(id).className = className;
+    tag.id = id;
+    tag.appendChild(document.createTextNode("dummy text"));
+debug(`add ${tag.tagName} '${className || "null"}' to body`);
+    document.body.appendChild(tag);
+    const retval = styleof(tag);
+    const retval2 = styleof(document.getElementById(id));
+debug(`dummy div class = '${document.getElementById(id).className}'`);
+if (retval != retval2) throw "ERROR: style mismatch";
+debug(`remove ${tag.tagName} '${className || "null"}' to body`);
+    document.body.remove(tag); //dummy element no longer needed
+    return style2dict(retval);
+}
+
+function styleof(dom_elt)
+{
+    return document.defaultView.getComputedStyle(dom_elt, "").cssText;
+}
+
+function style2dict(styleText)
+{
+    const attrs = styleText
+        .matchAll(/([\w\-]+)\s*:\s*([^;\s]*)\s*;/g) || [] //name, value pairs
+debug("attrs", JSON.stringify(attrs));
+    return Array.from(attrs)
+//        .sort((lhs, rhs) => lhs[1].localeCompare(rhs[1]) || lhs[2].localeCompare(rhs[2])) //sort in case order varies; mainly for easier debug
+        .reduce((attrs, [_, name, value]) => ((value != "") && (attrs[name.replace(/-\w/g, (str) => str.slice(1).toUpperCase())] = value), attrs), {}); //convert attr name to camel case
+}
+*/
 
 /*
 function tabstrip()
@@ -148,7 +258,7 @@ function gotab(evt, label) //= {target: document.getElementiById("tabstrip").get
 		    }))),
 	         alltabs), []);
 //	        .map((tab) => alltabs.push(tab)));
-//debug("got", gotab.tabs.length, "tabs using selector");
+debug("got", gotab.tabs.length, "tabs using selector");
 //        .getElementsByTagName("button") //querySelectorAll(".tabstrip button"));
 //	gotab.buttons.forEach((button) => button.onclick = gotab); //.addEventListener("click", gotab)); //function(evt)
 //        gotab.links = Array.from(document.getElementsByClassName("tab-link"));
@@ -279,4 +389,5 @@ function debug(...args)
 //    Object.defineProperty(Array.prototype, "push_fluent", {value: function(...args) { this.push(...args); return this; }});
 //}
 
+debug("js loaded");
 //eof

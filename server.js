@@ -77,6 +77,15 @@ const exts = [".md", ".js", ".html"] //in order of preference, first = notebook
 //app.use('*.php', function(request, response, next)
 //app.use('/', function(request, response, next)
 
+//enable CORS:
+//from https://enable-cors.org/server_expressjs.html
+app.use((req, resp, next) =>
+{
+    resp.header("Access-Control-Allow-Origin", "null"); //allow access from local files
+    resp.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+});
+
 //rewrite url for index files and inherited files:
 app.use((req, resp, next) =>
 {
