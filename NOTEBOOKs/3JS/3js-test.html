@@ -15,10 +15,11 @@ The modeler runs as JavaScript code within your browser and uses WebGL.  It is a
 ## Example Model (Hello Cube)
 Below is just one simple OpenGL model example:
 
-<script type="module" comment="module allows import keyword">
+<script type="module">
 //import * as THREE from './resources/threejs/r115/build/three.module.js';
 //import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.101.1/build/three.min.js";
 //require("https://cdn.jsdelivr.net/npm/three@0.101.1/examples/js/controls/OrbitControls.js");
+//CAUTION: must use type="module" above for "import" keyword to be valid
 import * as THREE from 'https://unpkg.com/three@0.108.0/build/three.module.js';
 import {OrbitControls} from 'https://unpkg.com/three@0.108.0/examples/jsm/controls/OrbitControls.js';
  
@@ -39,12 +40,12 @@ const boxHeight = 1;
 const boxDepth = 1;
 const geometry = new THREE.BoxGeometry(boxWidth, boxHeight, boxDepth);
 
-const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
-//const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
+//const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
+const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
 const cube = new THREE.Mesh(geometry, material);
 scene.add(cube);
 
-if (false)
+//if (false)
 {
   const color = 0xFFFFFF;
   const intensity = 1;

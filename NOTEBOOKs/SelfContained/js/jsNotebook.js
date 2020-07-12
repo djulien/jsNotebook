@@ -1,9 +1,11 @@
 //notebook common logic:
 "use strict";
 "TODO: magic-globals";
+console.log("loading jsNotebook main logic, doc state:", document.readyState);
 
+(function my_scope() //use IIF to avoid name conflicts with caller
+{
 debug("using ver " + VER);
-debug("start: doc state", document.readyState);
 //debug("body style", JSON.stringify(document.body.style));
 //debug("body comp style", JSON.stringify(window.getComputedStyle(document.body)));
 //debug("qry body comp style", JSON.stringify(window.getComputedStyle( document.querySelector("body"))));
@@ -389,5 +391,7 @@ function debug(...args)
 //    Object.defineProperty(Array.prototype, "push_fluent", {value: function(...args) { this.push(...args); return this; }});
 //}
 
-debug("js loaded");
+//debug("js loaded");
+}());
+console.log("jsNotebook main logic loaded");
 //eof
