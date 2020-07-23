@@ -2,13 +2,13 @@
 [toc]
 
 ## Introduction
-A [jsNotebook](https://github.com/djulien/jsNotebook) is an interactive web page using JavaScript.  It is similar in concept to a [Jupyter Notebook](https://jupyter.org), except that it runs Javascript instead of Python ('cause I'm a Javascript fan &#x1F601;).  This particular implementation is more simplistic.  jsNotebooks are serverless, 0-install, and require no special tools - a simple text editor can be used to create or edit a jsNotebook.  (A few lines of boilerplate text must also be added to each jsNotebook page to accomplish this).
+A [jsNotebook](https://github.com/djulien/jsNotebook) is an interactive web page using JavaScript - like a [Jupyter Notebook](https://jupyter.org), except that it runs Javascript instead of Python ('cause I'm a Javascript fan &#x1F601;).  This particular implementation is more simplistic.  jsNotebooks are serverless, 0-install, and require no special tools - a simple text editor can be used to create or edit a jsNotebook.  (A few lines of boilerplate text must also be added to each jsNotebook page to accomplish this).
 
 jsNotebook pages are stored as **Markdown** (text) files to allow quick and easy formatting.  [Showdown](https://github.com/showdownjs/showdown) is used to render the Markdown text as **HTML** for display in the browser, where it can then be viewed or edited *interactively* (not there yet).
 
 jsNotebook pages can be as simple as static Markdown/text, or as complex as an entire web app.  They can contain HTML tags (including &lt;script&gt;), or pull in additional HTML, CSS, Javascript, or other files from a web server or public CDN.  For example, here is a 100 x 50 px cyan rectangle using an HTML \<div> tag: <div style="width: 100px; height: 50px; background-color: #0ff; border: 1px solid black;"></div>
 
-jsNotebook pages are intended to be compact and self-contained (except for CDNs), similar in concept to [TiddlyWiki](https://tiddlywiki.com).  They are "serverless" and can be stored in a local file system or on a web server, or shared easily as an email text file attachment.
+jsNotebook pages are intended to be compact and self-contained (except for CDNs), similar in concept to [TiddlyWiki](https://tiddlywiki.com).  They are "serverless" and can be stored in a local file system or on a web server, or shared easily as a text file attachment in an email.
 
 jsNotebooks can be created from scratch, but the easiest way is to simply open an existing/example jsNotebook and then edit and save it with a different file name.  The first jsNotebook filename opened must end with **".html"** (so the browser knows how to render it), but subsequent jsNotebooks do not have this restriction if they are dragged and dropped onto a previously open jsNotebook.
 
@@ -72,7 +72,7 @@ foo bar[^1] is a very[^n] foo bar[^n] [^1]: This is my first footnote [^n]: Visi
 #### (0-install boilerplate)
 <!-- jsNotebook 0.20.7.D: append lines below for 0-install -->
 <noscript>ERROR: This jsNotebook can't be displayed unless JavaScript is enabled.</noscript>
-<script xsrc="https://raw.githubusercontent.com/djulien/jsNotebook/master/dist/jsNotebook.js" src="./dist/jsNotebook.js" cdn-src="https://unpkg.com/jsNotebook@0.20.7/dist/jsNotebook.min.js" localhost-src="http://localhost:3000/js/jsNotebook.js" type="text/javascript" defer></script>
+<script src="https://raw.githubusercontent.com/djulien/jsNotebook/master/dist/jsNotebook.js" dev-src="./dist/jsNotebook.js" cdn-src="https://unpkg.com/jsNotebook@0.20.7/dist/jsNotebook.min.js" localhost-src="http://localhost:3000/js/jsNotebook.js" type="text/javascript" defer></script>
 <style type="text/css">
 /* inline styles in case Javascript is disabled */
 html, div { background-color: #333; }
